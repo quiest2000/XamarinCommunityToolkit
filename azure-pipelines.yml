@@ -9,8 +9,9 @@ variables:
   NETCORE_VERSION: '3.1.x'
   NETCORE_TEST_VERSION: '3.1.x'
   RunPoliCheck: 'false'
-  PathToCsproj: 'XamarinCommunityToolkit/Xamarin.CommunityToolkit.csproj'
-  PathToMarkupCsproj: 'Xamarin.CommunityToolkit.Markup/Xamarin.CommunityToolkit.Markup.csproj'
+  PathToCsproj: 'src/CommunityToolkit/Xamarin.CommunityToolkit/Xamarin.CommunityToolkit.csproj'
+  PathToMarkupCsproj: 'src/Markup/Xamarin.CommunityToolkit.Markup/Xamarin.CommunityToolkit.Markup.csproj'
+  PathToSln: 'Xamarin.CommunityToolkit.Sample.sln'
 
 resources:
   repositories:
@@ -44,6 +45,18 @@ schedules:
     - main
 
 jobs:
+  - job: build_windows_samples
+    displayName: Build Windows Samples
+    pool:
+      vmImage: windows-2019
+    steps:
+      - task: MSBuild@1
+        displayName: Build Solution
+        inputs:
+          solution: $(PathToSln)
+          configuration: Release
+          msbuildArguments: '/restore /t:Build /p:ContinuousIntegrationBuild=true /p:Deterministic=false'
+      
   - job: build_windows
     displayName: Build Windows Library
     pool:
